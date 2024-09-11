@@ -1,4 +1,5 @@
 {
+  pkgs,
   stdenv,
   fetchzip,
   fetchurl,
@@ -28,8 +29,9 @@ stdenv.mkDerivation rec {
   };
 
   sourceRoot = ".";
+  programs.nix-ld.enable = true;
 
-  rpath = lib.makeLibraryPath [
+  programs.nix-ld.libraries = lib.makeLibraryPath [
     stdenv.cc.cc.lib
     alsa-lib
     gtk3
@@ -68,11 +70,11 @@ stdenv.mkDerivation rec {
   fixupPhase = ''
     runHook preFixup
 
-    patchelf --set-rpath "${rpath}" --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $out/opt/ALVR/bin/alvr_dashboard
-    patchelf --set-rpath "${rpath}" --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $out/opt/ALVR/libexec/alvr/vrcompositor-wrapper
-    patchelf --set-rpath "${rpath}" $out/opt/ALVR/libexec/alvr/alvr_drm_lease_shim.so
-    patchelf --set-rpath "${rpath}" $out/opt/ALVR/lib64/libalvr_vulkan_layer.so
-    patchelf --set-rpath "${rpath}" $out/opt/ALVR/lib64/alvr/bin/linux64/driver_alvr_server.so
+    # patchelf --set-rpath "${rpath}" --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $out/opt/ALVR/bin/alvr_dashboard
+    # patchelf --set-rpath "${rpath}" --set-interpreter "$(cat $NIX_CC/nix-support/dynamic-linker)" $out/opt/ALVR/libexec/alvr/vrcompositor-wrapper
+    # patchelf --set-rpath "${rpath}" $out/opt/ALVR/libexec/alvr/alvr_drm_lease_shim.so
+    # patchelf --set-rpath "${rpath}" $out/opt/ALVR/lib64/libalvr_vulkan_layer.so
+    # patchelf --set-rpath "${rpath}" $out/opt/ALVR/lib64/alvr/bin/linux64/driver_alvr_server.so
 
     sed -i "s#../../../lib64/libalvr_vulkan_layer.so#$out/opt/ALVR/lib64/libalvr_vulkan_layer.so#" $out/opt/ALVR/share/vulkan/explicit_layer.d/alvr_x86_64.json
 
